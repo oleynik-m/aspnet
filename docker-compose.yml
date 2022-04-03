@@ -1,0 +1,31 @@
+version: '3.9'
+
+networks:
+  aspnet:
+    driver: bridge
+
+services:
+    webappgame:
+        build:
+          context: .
+          dockerfile: Dockerfile
+        ports:
+            - "8000:80"
+        depends_on:
+            - pg_games
+        networks:
+        - aspnet
+        container_name: webappgame
+        environment:
+            DefaultConnection: "Host=pg_games;Port=5432;Database=games;Username=postgres;Password=P@ssw0rd" 
+    pg_games:
+        image: "postgres:latest"
+        ports:
+            - "5433:5432"
+        environment:
+          POSTGRES_USER: "postgres"
+          POSTGRES_PASSWORD: "P@ssw0rd"
+          POSTGRES_DB: "games"       
+        networks:
+        - aspnet
+        container_name: pg_games
